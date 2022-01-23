@@ -4,25 +4,39 @@
     <div class="nav-wrapper">
       <button class="menu"><i class="material-icons">menu</i></button>
       <nav class="label">
-        <ul v-for="menu in menus" :key="menu.key" class="list">
-          <li>{{ menu.label }}</li>
+        <ul v-for="menu in menus" :key="menu.key">
+          <li @mouseover="isActive = true; activeMenu = menu.key">{{ menu.label }}</li>
         </ul>
       </nav>
       <button class="search"><i class="material-icons">search</i></button>
+    </div>
+
+    <div class="dropdown" v-show="isActive">
+      <div class="content">
+        <nav>
+          <ul v-for="sub in dropdownMenus" :key="sub.key">
+            <li>{{ sub.label }}</li>
+          </ul>
+        </nav>
+      </div>
     </div>
 
   </div>
 </template>
 
 <script>
-import { inject } from "vue"
+import { computed, inject, ref } from 'vue'
 
 export default {
   name: 'navigation',
   setup() {
     const menus = inject('menus')
 
-    return { menus }
+    const isActive = ref(false)
+    const activeMenu = ref(null)
+    const dropdownMenus = computed(() => menus.find(menu => menu.key === activeMenu.value)?.sub)
+
+    return { menus, isActive, activeMenu, dropdownMenus }
   }
 }
 </script>
@@ -31,6 +45,7 @@ export default {
 #nav {
   display: grid;
   grid-template-columns: 1fr minmax(auto, 110rem) 1fr;
+  grid-template-rows: minmax(6.4rem, auto) 1fr;
   position: sticky;
   top: -0.1rem;
   height: 6.4rem;
@@ -39,6 +54,7 @@ export default {
 
   .nav-wrapper {
     display: inherit;
+    grid-row: 1 / 2;
     grid-column: 2 / 3;
     grid-template-columns: 2fr 7fr 2fr;
     align-items: center;
@@ -61,6 +77,17 @@ export default {
       justify-self: end;
     }
   }
+
+  .dropdown {
+    display: inherit;
+    grid-row: 2 / 3;
+    grid-column: 2 / 3;
+    z-index: 1;
+    background: var(--white);
+    border: 1px solid #ddd;
+  }
 }
+
+
 
 </style>

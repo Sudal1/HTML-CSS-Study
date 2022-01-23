@@ -27,7 +27,7 @@
   grid-template-columns: 1fr minmax(auto, 110rem) 1fr;
   height: 6.0rem;
   background: var(--white);
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid rgb(233, 233, 233);
   
   .header-wrapper {
     display: inherit;

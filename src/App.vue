@@ -2,6 +2,8 @@
   <div class="container">
     <MyHeader />
     <MyNav />
+    <br><br>
+    <img src="./assets/issue/hot01.jpg">
     <img src="./assets/issue/hot01.jpg">
     <router-view/>
   </div>

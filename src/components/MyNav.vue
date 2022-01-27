@@ -90,10 +90,11 @@ export default {
 #nav {
   display: grid;
   grid-template-columns: 1fr minmax(auto, 110rem) 1fr;
-  grid-template-rows: minmax(6.4rem, auto) 1fr;
+  grid-template-rows: minmax(7.2rem, 1fr) 1fr;
   position: sticky;
-  top: -0.1rem;
-  height: 6.4rem;
+  top: 0rem;
+  height: 7.2rem;
+  z-index: 10;
   background: var(--white);
   border-bottom: 1px solid #ddd;
 

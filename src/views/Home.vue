@@ -1,20 +1,19 @@
 <template>
   <div class="home">
-    <transition-group name="slide" tag="div" class="slider">
-      <div
-        class="image"
-        v-for="i in [page]"
-        :key="i"
-        :style="{ backgroundImage: `url(${require('@/assets/slider/' + curImage)})` }"
-      ></div>
-    </transition-group>
-    <button class="prev" @click="prev"><i class="material-icons">arrow_back_ios_new</i></button>
-    <button class="next" @click="next"><i class="material-icons">arrow_forward_ios</i></button>
+
+    <div class="slider">
+      <transition-group name="slide">
+        <div class="slider-img" v-for="i in [page]" :key="i" :style="{ backgroundImage: `url(${require('@/assets/slider/' + curImage)})` }"></div>
+      </transition-group>
+      <button class="prev" @click="prev"><i class="material-icons">arrow_back_ios_new</i></button>
+      <button class="next" @click="next"><i class="material-icons">arrow_forward_ios</i></button>
+    </div>
+
   </div>
 </template>
 
 <script>
-import {  ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 
 export default {
   name: 'Home',
@@ -52,16 +51,26 @@ export default {
 
  <style lang="scss" scoped>
 .home {
+  display: grid;
+  grid-auto-rows: auto;
+
   .slider {
-    overflow: hidden;
-    width: 100%;
+    display: inherit;
+    grid-template-columns: 1fr minmax(auto, 130rem) 1fr;
+    grid-row: 1 / 2;
     height: 46.0rem;
 
-    .image {
-      position: absolute;
-      top: 12.4rem;
-      width: 100%;
-      height: 46.0rem;
+    .slider-img:nth-child(1) {
+      grid-row: 1 / 3;
+      grid-column: 2 / 3;
+      background-size: 100% 46.0rem;
+    }
+
+    .slider-img:nth-child(2) {
+      grid-row: 1 / 3;
+      grid-column: 3 / 4;
+      width: 130rem;
+      background-size: 130rem 46.0rem;
     }
   }
 
@@ -77,14 +86,14 @@ export default {
 
 .slide-enter-active,
 .slide-leave-active {
-  transition: all 1.0s ease;
+  transition: all 2.0s ease;
 }
 
-.slide-enter {
-  transform: translateX(100%);
+.slide-enter-to {
+  transform: translateX(-200%);
 }
 
 .slide-leave-to {
-  transform: translateX(-100%);
+  transform: translateX(-200%);
 }
  </style>

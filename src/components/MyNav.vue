@@ -1,5 +1,5 @@
 <template>
-  <div id="nav">
+  <div id="nav" @mouseleave="isActive = false">
 
     <div class="nav-header">
       <button class="menu"><i class="material-icons">menu</i></button>
@@ -11,26 +11,30 @@
       <button class="search"><i class="material-icons">search</i></button>
     </div>
 
-    <div class="nav-dropdown" v-if="isActive">
+    <div class="nav-dropdown" v-show="isActive">
       <div class="wrapper">
+
         <nav class="list">
-          <ul v-for="sub in dropdownMenus" :key="sub.key" class="label">
-            <li>{{ sub.label }}</li>
-            <ul v-for="link in sub.link" :key="link" class="link">
-              <li>{{ link }}</li>
-            </ul>
-          </ul>
+          <div class="item" v-for="(sub, i) in dropdownMenus" :key="sub.key" :ref="el => { if (el) items[i] = el }">
+            <div class="content">
+              <h2>{{ sub.label }}</h2>
+              <ul v-for="link in sub.link" :key="link">
+                <li>{{ link }}</li>
+              </ul>
+            </div>
+          </div>
         </nav>
+
         <nav class="shortcut">
           <ul class="imgs">
-            <li><img src="../assets/health/health02.jpg"></li>
-            <li><img src="../assets/health/health03.jpg"></li>
+            <li><img src="../assets/shortcut.png"></li>
+            <li><img src="../assets/shortcut02.png"></li>
           </ul>
           <div class="btns">
             <button>인터넷 진료예약</button>
             <button>예약확인 / 취소</button>
           </div>
-          <span class="phone">대표전화<em>1588 - 5700</em></span>
+          <span class="phone">대표전화 <em>1588 - 5700</em></span>
         </nav>
       </div>
     </div>
@@ -39,18 +43,45 @@
 </template>
 
 <script>
-import { computed, inject, ref } from 'vue'
+import { inject, ref, computed, watchEffect, onBeforeUpdate } from 'vue'
 
 export default {
   name: 'navigation',
   setup() {
     const menus = inject('menus')
 
+    const items = ref([])
     const isActive = ref(false)
     const activeMenu = ref(null)
     const dropdownMenus = computed(() => menus.find(menu => menu.key === activeMenu.value)?.sub)
 
-    return { menus, isActive, activeMenu, dropdownMenus }
+    function resizeGridItem(item) {
+      const grid = document.getElementsByClassName('list')[0];
+      const rowHeight = parseInt(window.getComputedStyle(grid).getPropertyValue('grid-auto-rows'));
+      const rowGap = parseInt(window.getComputedStyle(grid).getPropertyValue('row-gap'));
+      const rowSpan = Math.ceil((item.querySelector('.content')?.getBoundingClientRect().height + rowGap) / (rowHeight + rowGap));
+      item.style.gridRowEnd = 'span ' + rowSpan;
+    }
+
+    function resizeAllGridItems() {
+      for (let x = 0; x < items.value.length; x++) {
+        resizeGridItem(items.value[x]);
+      }
+    }
+
+    const toggleIsActive = () => {
+      isActive.value != isActive.value
+    }
+
+    window.addEventListener('resize', resizeAllGridItems)
+
+    onBeforeUpdate(() => { items.value = [] })
+
+    watchEffect(() => {
+      if (dropdownMenus.value?.length) { resizeAllGridItems() }
+    })
+
+    return { menus, items, isActive, activeMenu, dropdownMenus }
   }
 }
 </script>
@@ -111,44 +142,77 @@ export default {
       .list {
         display: inherit;
         grid-template-columns: repeat(3, 1fr);
+        grid-auto-rows: 1.0rem;
         grid-column: 1 / 2;
-        gap: 1.0rem;
-        padding: 2.0rem 4.0rem 2.0rem 4.0rem;
-        line-height: 3.0rem;
+        row-gap: 0rem;
+        padding: 2.0rem;
+        line-height: 3.6rem;
         border-right: 1px solid #ddd;
-      }
 
-      .list > ul > li {
-        margin-bottom: 0.8rem;
-        font-size: 1.6rem;
-        font-weight: bold;
-        letter-spacing: 0.01em;
-      }
+        .item {
+          margin-left: 5.0rem;
+        }
 
-      .list > ul > ul > li {
-        font-size: 1.4rem;
-        color: rgb(110, 110, 110);
+        div > h2 {
+          font-size: 1.6rem;
+          font-weight: bold;
+          letter-spacing: 0.01em;
+        }
+
+        ul > li {
+          font-size: 1.4rem;
+          color: rgb(110, 110, 110);
+        }
       }
 
       .shortcut {
         display: inherit;
-        grid-template-rows: repeat(auto-fill, minmax(0, auto));
+        grid-template-rows: repeat(auto-fit, minmax(0, auto));
         grid-column: 2 / 3;
         place-items: center center;
-        padding: 4.0rem 0 4.0rem 0;
+        padding: 4.0rem 4.0rem 2.0rem 4.0rem;
+        font-size: 1.4rem;
 
         .imgs img {
-          width: 30.0rem;
-          height: 8.0rem;
-          margin-bottom: 1.0rem;
+          width: 36.0rem;
+          margin-bottom: 1.6rem;
         }
 
         .btns {
+          width: 100%;
+          height: 4.0rem;
           display: inherit;
-          grid-template-columns: repeat(auto-fit, auto);
+          grid-template-columns: repeat(2, 1fr);
+          column-gap: 1.0rem;
+          margin-bottom: 1.6rem;
+
+          button {
+            border: 1px solid #ddd;
+            font-weight: bold;
+          }
+
+          button:first-child {
+            grid-column: 1 / 2;
+            color: var(--white);
+            background: var(--secondary);
+          }
+
+          button:last-child {
+            color: var(--secondary);
+            background: var(--white);
+          }
         }
-        .btns:first-child {
-          justify-items: start;
+
+        .phone {
+          align-self: center;
+          justify-self: start;
+          color: rgb(110, 110, 110);
+
+          em {
+            color: var(--black);
+            font-size: 2.4rem;
+            font-weight: bold;
+          }
         }
       }
     }

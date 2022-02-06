@@ -2,9 +2,9 @@
   <div class="home">
 
     <div class="slider">
-      <transition-group name="slide">
-        <div class="slider-img" v-for="i in [page]" :key="i" :style="{ backgroundImage: `url(${require('@/assets/slider/' + curImage)})` }"></div>
-      </transition-group>
+      <transition name="slide">
+        <img :src="`${require('@/assets/slider/' + curImage)}`" alt="" :key="curImage">
+      </transition>
       <button class="prev" @click="prev"><i class="material-icons">arrow_back_ios_new</i></button>
       <button class="next" @click="next"><i class="material-icons">arrow_forward_ios</i></button>
     </div>
@@ -56,31 +56,18 @@ export default {
 
   .slider {
     display: inherit;
-    grid-template-columns: 1fr minmax(auto, 130rem) 1fr;
-    grid-row: 1 / 2;
-    height: 46.0rem;
+    place-items: center;
+    max-height: 46.0rem;
 
-    .slider-img:nth-child(1) {
-      grid-row: 1 / 3;
-      grid-column: 2 / 3;
-      background-size: 100% 46.0rem;
+    img {
+      height: 46.0rem;
     }
 
-    .slider-img:nth-child(2) {
-      grid-row: 1 / 3;
-      grid-column: 3 / 4;
-      width: 130rem;
-      background-size: 130rem 46.0rem;
+    button {
+      position: relative;
+      color: var(--black);
+      z-index: 1;
     }
-  }
-
-  button {
-    color: var(--white);
-    z-index: 1;
-  }
-
-  button:first-child {
-
   }
 }
 
